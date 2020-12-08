@@ -7,6 +7,14 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+app.post("/event", (req, res) => {
+  const body = req.body;
+
+  if (body.challenge) {
+    res.status(200).json({ challenge: body.challenge });
+  }
+});
+
 app.listen(port, () => {
   console.log(`I'm listening on http://localhost:${port}`);
 });
