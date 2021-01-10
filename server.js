@@ -14,10 +14,10 @@ app.get("/", (req, res) => {
 
 app.post("/event", async (req, res) => {
   const body = req.body;
-  res.status(200).send();
   if (body.challenge) {
     return res.status(200).json({ challenge: body.challenge });
   }
+  res.status(200).send();
   if (body.event.type === "reaction_added") {
     console.log("Add user to group");
     const result = await fetch("https://slack.com/api/usergroups.list", {
@@ -41,18 +41,20 @@ app.post("/event", async (req, res) => {
       const formattedUserGroup = [
         ...userGroupList.users,
         body.event.item_user,
-      ].join();
+      ].join(",");
       console.log(formattedUserGroup);
+
       const updateResult = await fetch(
         `https://slack.com/api/usergroups.users.update`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json; charset=utf-8",
+            "Content-type": "application/json; charset=utf-8",
             Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
           },
           body: JSON.stringify({
             usergroup: userGroup.id,
+            team_id: userGroup.team_id,
             users: formattedUserGroup,
           }),
         }
